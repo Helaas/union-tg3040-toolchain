@@ -1,8 +1,13 @@
 FROM debian:buster-slim
 ENV DEBIAN_FRONTEND noninteractive
 
-ENV TZ=America/New_York
+ENV TZ=Europe/Brussels
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# Use archive.debian.org instead of deb.debian.org (Buster is EOL)
+RUN sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list \
+ && sed -i 's|http://security.debian.org/debian-security|http://archive.debian.org/debian-security|g' /etc/apt/sources.list \
+ && echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
 
 RUN apt-get -y update && apt-get -y install \
 	bc \
